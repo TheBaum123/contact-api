@@ -80,7 +80,7 @@ app.post("/new", (req, res) => {
     if(req.body.email && req.body.message && validateEmailAddress.test(req.body.email)) {
         create(req.body.email, req.body.message)
         sendNotificationEmail(req.body.email, req.body.message)
-        res.redirect("https://thebaum123.github.io")
+        res.redirect("https://thebaum123.github.io/#2")
     } else {
         res.status(400)
         if(!req.body.email && !req.body.message) {
