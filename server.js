@@ -1,6 +1,7 @@
 const express = require("express")
 const uuid = require("uuid")
 const {MongoClient, ServerApiVersion} = require("mongodb")
+const nodemailer = require("nodemailer")
 require("dotenv").config()
 
 
@@ -47,6 +48,31 @@ async function create(validMail, Message) {
     }
 }
 
+function sendNotificationEmail(mail, message) {
+    const transporter = nodemailer.createTransport({
+        host: 'smtp.gmail.com',
+        port: 587,
+        secure : false,
+        auth: {
+            user: process.env.EMAILLOGIN,
+            pass: process.env.EMAILPASSWORD
+        }
+    });
+    let mailOptions = {
+        from: mail,
+        to: process.env.RECEIVINGEMAIL,
+        subject: `new message from ${mail} sent with your api`,
+        text: message
+    }
+    transporter.sendMail(mailOptions, function(error, info) {
+        if(error) {
+            console.log(error)
+        } else {
+            console.log("Sent a new Email")
+        }
+    })
+}
+
 app.get("/health", (req, res) => {
     res.json("health check successfull").status(200).send
 })
@@ -55,6 +81,7 @@ app.get("/health", (req, res) => {
 app.post("/new", (req, res) => {
     if(req.body.email && req.body.message && validateEmailAddress.test(req.body.email)) {
         create(req.body.email, req.body.message)
+        sendNotificationEmail(req.body.email, req.body.message)
         res.status(200).json({
         received_data : {
             email : req.body.email,
