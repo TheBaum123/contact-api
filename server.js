@@ -67,8 +67,6 @@ function sendNotificationEmail(mail, message) {
     transporter.sendMail(mailOptions, function(error, info) {
         if(error) {
             console.log(error)
-        } else {
-            console.log("Sent a new Email")
         }
     })
 }
@@ -82,12 +80,7 @@ app.post("/new", (req, res) => {
     if(req.body.email && req.body.message && validateEmailAddress.test(req.body.email)) {
         create(req.body.email, req.body.message)
         sendNotificationEmail(req.body.email, req.body.message)
-        res.status(200).json({
-        received_data : {
-            email : req.body.email,
-            message : req.body.message
-        }
-    })
+        res.redirect("https://thebaum123.github.io")
     } else {
         res.status(400)
         if(!req.body.email && !req.body.message) {
