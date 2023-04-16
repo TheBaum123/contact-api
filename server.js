@@ -48,7 +48,7 @@ async function create(validMail, Message) {
 }
 
 app.get("/health", (req, res) => {
-    res.json().status(200).send
+    res.json("health check successfull").status(200).send
 })
 
 
