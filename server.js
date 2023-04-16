@@ -47,6 +47,10 @@ async function create(validMail, Message) {
     }
 }
 
+app.get("/health", (req, res) => {
+    res.json().status(200).send
+})
+
 
 app.post("/new", (req, res) => {
     if(req.body.email && req.body.message && validateEmailAddress.test(req.body.email)) {
