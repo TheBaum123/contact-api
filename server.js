@@ -79,6 +79,10 @@ app.post("/new", (req, res) => {
     res.send
 })
 
+app.get("*", (req, res) => {
+    res.sendStatus(404)
+})
+
 
 console.log(`listening on port ${port}`)
 app.listen(port)
