@@ -66,10 +66,10 @@ function sendNotificationEmail(mail, message, name, phone) {
     });
     let mailText = `new message from ${mail}.`
     if(name) {
-        mailText = mailText + ` sender name: ${name}`
+        mailText = mailText + ` sender name: ${name}.`
     }
     if(phone) {
-        mailText = mailText + ` sender phone: ${phone}`
+        mailText = mailText + ` sender phone: ${phone}.`
     }
     let mailOptions = {
         from: mail,
