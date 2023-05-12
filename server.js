@@ -28,7 +28,7 @@ const client = new MongoClient(mongoURI, {
     }
 })
 
-async function create(validMail, Message) {
+async function create(validMail, Message, name, phone) {
     try {
         await client.connect()
         const database = client.db(mongoDBDBName)
@@ -41,6 +41,12 @@ async function create(validMail, Message) {
             "e-mail" : validMail,
             "message" : Message
         }
+        if(name) {
+            data.name = name
+        }
+        if(phone) {
+            data.phone = phone
+        }
         await col.insertOne(data)
     }
     finally {
@@ -48,7 +54,7 @@ async function create(validMail, Message) {
     }
 }
 
-function sendNotificationEmail(mail, message) {
+function sendNotificationEmail(mail, message, name, phone) {
     const transporter = nodemailer.createTransport({
         host: 'smtp.gmail.com',
         port: 587,
@@ -58,10 +64,17 @@ function sendNotificationEmail(mail, message) {
             pass: process.env.EMAILPASSWORD
         }
     });
+    let mailText = `new message from ${mail}.`
+    if(name) {
+        mailText = mailText + ` sender name: ${name}`
+    }
+    if(phone) {
+        mailText = mailText + ` sender phone: ${phone}`
+    }
     let mailOptions = {
         from: mail,
         to: process.env.RECEIVINGEMAIL,
-        subject: `new message from ${mail} sent with your api`,
+        subject: mailText,
         text: message
     }
     transporter.sendMail(mailOptions, function(error, info) {
@@ -78,8 +91,8 @@ app.get("/health", (req, res) => {
 
 app.post("/new", (req, res) => {
     if(req.body.email && req.body.message && validateEmailAddress.test(req.body.email)) {
-        create(req.body.email, req.body.message)
-        sendNotificationEmail(req.body.email, req.body.message)
+        create(req.body.email, req.body.message, req.body.name, req.body.phone)
+        sendNotificationEmail(req.body.email, req.body.message, req.body.name, req.body.phone)
         res.redirect("https://thebaum123.github.io/#2")
     } else {
         res.status(400)
